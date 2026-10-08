@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@implements IDisposable
+@inject AdminService Admin
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TPWeb</a>
     </div>
@@ -9,22 +12,34 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Inicio</NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="menu">Menú</NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+        @if (Admin.EsAdmin)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin">Administración</NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="productos">Productos</NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="clientes">Clientes</NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="pedidos">Pedidos</NavLink>
+            </div>
+        }
     </nav>
 </div>
 
+@code {
+    protected override void OnInitialized() => Admin.Cambio += Refrescar;
+
+    private void Refrescar() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Admin.Cambio -= Refrescar;
+}

@@ -1,11 +1,15 @@
-using TPWeb.Components;
 using Microsoft.EntityFrameworkCore;
+using TPWeb.Components;
 using TPWeb.Data;
+using TPWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<AdminService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

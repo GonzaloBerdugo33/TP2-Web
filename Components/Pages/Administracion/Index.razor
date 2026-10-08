@@ -1,0 +1,14 @@
+﻿@page "/admin"
+@inject AdminService Admin
+
+<PageTitle>Administración</PageTitle>
+
+<AdminGuard>
+    <h1>Panel de administración</h1>
+    <div class="list-group mb-3" style="max-width: 400px;">
+        <a class="list-group-item list-group-item-action" href="productos">Productos</a>
+        <a class="list-group-item list-group-item-action" href="clientes">Clientes</a>
+        <a class="list-group-item list-group-item-action" href="pedidos">Pedidos</a>
+    </div>
+    <button class="btn btn-outline-secondary" @onclick="Admin.Salir">Cerrar sesión</button>
+</AdminGuard>

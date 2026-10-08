@@ -1,0 +1,41 @@
+﻿@implements IDisposable
+@inject AdminService Admin
+
+@if (Admin.EsAdmin)
+{
+    @ChildContent
+}
+else
+{
+    <div class="card mx-auto" style="max-width: 400px;">
+        <div class="card-body">
+            <h5 class="card-title">Acceso de administrador</h5>
+            <input type="password" class="form-control mb-2"
+                   placeholder="Clave" @bind="clave" @bind:event="oninput" />
+            @if (error)
+            {
+                <div class="alert alert-danger py-1">Clave incorrecta</div>
+            }
+            <button class="btn btn-primary" @onclick="Ingresar">Ingresar</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string clave = string.Empty;
+    private bool error;
+
+    protected override void OnInitialized() => Admin.Cambio += Refrescar;
+
+    private void Ingresar()
+    {
+        error = !Admin.Ingresar(clave);
+        clave = string.Empty;
+    }
+
+    private void Refrescar() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Admin.Cambio -= Refrescar;
+}

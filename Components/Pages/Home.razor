@@ -1,7 +1,33 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Inicio</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="text-center my-5">
+    <h1 class="display-5">Bienvenido</h1>
+    <p class="lead">¿Cómo querés ingresar?</p>
+</div>
 
-Welcome to your new app.
+<div class="row justify-content-center g-4">
+    <div class="col-12 col-md-5 col-lg-4">
+        <a href="menu" class="text-decoration-none">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body py-5">
+                    <h2 class="card-title">Cliente</h2>
+                    <p class="card-text text-muted">Mirá el menú y hacé tu pedido</p>
+                    <span class="btn btn-primary">Ver menú</span>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-12 col-md-5 col-lg-4">
+        <a href="admin" class="text-decoration-none">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body py-5">
+                    <h2 class="card-title">Admin</h2>
+                    <p class="card-text text-muted">Gestioná productos, clientes y pedidos</p>
+                    <span class="btn btn-outline-secondary">Ingresar</span>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
