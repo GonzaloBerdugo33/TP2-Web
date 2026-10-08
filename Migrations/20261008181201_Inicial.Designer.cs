@@ -12,7 +12,7 @@ using TPWeb.Data;
 namespace TPWeb.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261008043906_Inicial")]
+    [Migration("20261008181201_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -24,6 +24,31 @@ namespace TPWeb.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("TPWeb.Models.Cliente", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clientes");
+                });
 
             modelBuilder.Entity("TPWeb.Models.DetalleVenta", b =>
                 {
@@ -74,46 +99,12 @@ namespace TPWeb.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
-                    b.Property<int>("ProveedorId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Stock")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProveedorId");
-
                     b.ToTable("Productos");
-                });
-
-            modelBuilder.Entity("TPWeb.Models.Proveedor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CUIT")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RazonSocial")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Proveedores");
                 });
 
             modelBuilder.Entity("TPWeb.Models.Venta", b =>
@@ -124,14 +115,31 @@ namespace TPWeb.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Cliente")
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("CostoEnvio")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TipoEntrega")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ClienteId");
 
                     b.ToTable("Ventas");
                 });
@@ -155,25 +163,25 @@ namespace TPWeb.Migrations
                     b.Navigation("Venta");
                 });
 
-            modelBuilder.Entity("TPWeb.Models.Producto", b =>
+            modelBuilder.Entity("TPWeb.Models.Venta", b =>
                 {
-                    b.HasOne("TPWeb.Models.Proveedor", "Proveedor")
-                        .WithMany("Productos")
-                        .HasForeignKey("ProveedorId")
+                    b.HasOne("TPWeb.Models.Cliente", "Cliente")
+                        .WithMany("Ventas")
+                        .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Proveedor");
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("TPWeb.Models.Cliente", b =>
+                {
+                    b.Navigation("Ventas");
                 });
 
             modelBuilder.Entity("TPWeb.Models.Producto", b =>
                 {
                     b.Navigation("DetallesVenta");
-                });
-
-            modelBuilder.Entity("TPWeb.Models.Proveedor", b =>
-                {
-                    b.Navigation("Productos");
                 });
 
             modelBuilder.Entity("TPWeb.Models.Venta", b =>
