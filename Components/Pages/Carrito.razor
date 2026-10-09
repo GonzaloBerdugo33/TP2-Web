@@ -1,0 +1,58 @@
+﻿@page "/carrito"
+@inject CarritoService CarritoServicio
+
+<h3>Carrito</h3>
+
+@if (CarritoServicio.Items.Count == 0)
+{
+    <p>Tu carrito está vacío</p>
+    <a href="/menu" class="btn btn-primary">Ir al menú</a>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in CarritoServicio.Items)
+            {
+                <tr>
+                    <td>
+                        @if (item.Producto.ImagenUrl is not null)
+                        {
+                            <img src="@item.Producto.ImagenUrl" alt="@item.Producto.Nombre" style="height:50px" />
+                        }
+                    </td>
+                    <td>@item.Producto.Nombre</td>
+                    <td>@item.Producto.Precio.ToString("C")</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary"
+                                @onclick="() => CarritoServicio.Disminuir(item.Producto.Id)">−</button>
+                        <span class="mx-2">@item.Cantidad</span>
+                        <button class="btn btn-sm btn-outline-secondary"
+                                disabled="@(item.Cantidad >= item.Producto.Stock)"
+                                @onclick="() => CarritoServicio.Aumentar(item.Producto.Id)">+</button>
+                    </td>
+                    <td>@item.Subtotal.ToString("C")</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="() => CarritoServicio.Quitar(item.Producto.Id)">Quitar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Total: @CarritoServicio.Total.ToString("C")</h4>
+
+    <a href="/menu" class="btn btn-secondary">Seguir comprando</a>
+    <a href="/checkout" class="btn btn-primary">Continuar</a>
+}
