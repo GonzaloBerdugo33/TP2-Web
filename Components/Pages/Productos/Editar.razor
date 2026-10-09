@@ -1,0 +1,94 @@
+﻿@page "/productos/editar/{Id:int}"
+@inject ProductoService ProductoService
+@inject ImagenService ImagenService
+@inject NavigationManager Navigation
+
+<AdminGuard>
+    <h3>Editar producto</h3>
+
+    @if (cargando)
+    {
+        <p>Cargando...</p>
+    }
+    else if (producto is null)
+    {
+        <p>No se encontró el producto</p>
+    }
+    else
+    {
+        <EditForm Model="producto" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <InputText class="form-control" @bind-Value="producto.Nombre" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Precio</label>
+                <InputNumber class="form-control" @bind-Value="producto.Precio" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <InputNumber class="form-control" @bind-Value="producto.Stock" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Imagen (opcional)</label>
+                @if (producto.ImagenUrl is not null)
+                {
+                    <img src="@producto.ImagenUrl" alt="@producto.Nombre" style="height:80px" class="d-block mb-2" />
+                }
+                <InputFile class="form-control" OnChange="SeleccionarArchivo" accept=".jpg,.jpeg,.png,.webp" />
+            </div>
+
+            @if (error is not null)
+            {
+                <div class="alert alert-danger">@error</div>
+            }
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="/productos" class="btn btn-secondary">Cancelar</a>
+        </EditForm>
+    }
+</AdminGuard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Producto? producto;
+    private IBrowserFile? archivo;
+    private string? error;
+    private bool cargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        producto = await ProductoService.ObtenerPorId(Id);
+        cargando = false;
+    }
+
+    private void SeleccionarArchivo(InputFileChangeEventArgs e)
+    {
+        archivo = e.File;
+    }
+
+    private async Task Guardar()
+    {
+        try
+        {
+            if (archivo is not null)
+            {
+                producto!.ImagenUrl = await ImagenService.Guardar(archivo);
+            }
+
+            await ProductoService.Actualizar(producto!);
+            Navigation.NavigateTo("/productos");
+        }
+        catch (InvalidOperationException ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
