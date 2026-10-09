@@ -10,6 +10,8 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<ProductoService>();
+builder.Services.AddScoped<ImagenService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -26,6 +28,8 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseAntiforgery();
 
