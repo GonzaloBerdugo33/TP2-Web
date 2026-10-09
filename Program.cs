@@ -12,6 +12,7 @@ builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<ProductoService>();
 builder.Services.AddScoped<ImagenService>();
+builder.Services.AddScoped<CarritoService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
