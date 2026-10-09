@@ -12,7 +12,7 @@ using TPWeb.Data;
 namespace TPWeb.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261009164511_DireccionOpcional")]
+    [Migration("20261009215841_DireccionOpcional")]
     partial class DireccionOpcional
     {
         /// <inheritdoc />
@@ -34,7 +34,6 @@ namespace TPWeb.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Direccion")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 

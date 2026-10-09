@@ -1,0 +1,124 @@
+﻿@page "/checkout"
+@inject CarritoService CarritoServicio
+@inject VentaService VentaServicio
+
+<h3>Finalizar compra</h3>
+
+@if (ventaConfirmada is not null)
+{
+    <div class="alert alert-success">
+        <h4>¡Pedido confirmado!</h4>
+        <p>Tu número de pedido es <strong>@ventaConfirmada.Id</strong>.</p>
+    </div>
+    <a href="/menu" class="btn btn-primary">Volver al menú</a>
+}
+else if (CarritoServicio.Items.Count == 0)
+{
+    <p>Tu carrito está vacío</p>
+    <a href="/menu" class="btn btn-primary">Ir al menú</a>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="cliente" OnValidSubmit="Confirmar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <InputText class="form-control" @bind-Value="cliente.Nombre" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Teléfono</label>
+                    <InputText class="form-control" @bind-Value="cliente.Telefono" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Entrega</label>
+                    <InputSelect class="form-select" @bind-Value="tipoEntrega">
+                        <option value="Mostrador">Retiro en mostrador</option>
+                        <option value="Delivery">Delivery</option>
+                    </InputSelect>
+                </div>
+
+                @if (tipoEntrega == "Delivery")
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Dirección</label>
+                        <InputText class="form-control" @bind-Value="cliente.Direccion" />
+                    </div>
+                }
+
+                <div class="mb-3">
+                    <label class="form-label">Forma de pago</label>
+                    <InputSelect class="form-select" @bind-Value="metodoPago">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Mercado Pago">Mercado Pago</option>
+                    </InputSelect>
+                </div>
+
+                @if (error is not null)
+                {
+                    <div class="alert alert-danger">@error</div>
+                }
+
+                <button type="submit" class="btn btn-primary" disabled= "@procesando">Confirmar pedido</button>
+                <a href="/carrito" class="btn btn-secondary">Volver al carrito</a>
+            </EditForm>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Resumen</h5>
+            <ul class="list-group">
+                @foreach (var item in CarritoServicio.Items)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@item.Cantidad × @item.Producto.Nombre</span>
+                        <span>@item.Subtotal.ToString("C")</span>
+                    </li>
+                }
+            </ul>
+            <h5 class="mt-3">Total: @CarritoServicio.Total.ToString("C")</h5>
+        </div>
+    </div>
+}
+
+@code {
+    private Cliente cliente = new();
+    private string tipoEntrega = "Mostrador";
+    private string metodoPago = "Efectivo";
+    private string? error;
+    private Venta? ventaConfirmada;
+    private bool procesando;
+
+    private async Task Confirmar()
+    {
+        error = null;
+
+        if (tipoEntrega == "Delivery" && string.IsNullOrWhiteSpace(cliente.Direccion))
+        {
+            error = "La dirección es obligatoria para Delivery";
+            return;
+        }
+
+        if (tipoEntrega == "Mostrador")
+            cliente.Direccion = null;
+
+        procesando = true;
+        try
+        {
+            ventaConfirmada = await VentaServicio.Confirmar(cliente, tipoEntrega, metodoPago, CarritoServicio.Items);
+            CarritoServicio.Vaciar();
+        }
+        catch (InvalidOperationException ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            procesando = false;
+        }
+    }
+}
