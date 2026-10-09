@@ -1,0 +1,70 @@
+﻿@page "/productos/nuevo"
+@inject ImagenService ImagenService
+@inject ProductoService ProductoService
+@inject NavigationManager Navigation
+
+<AdminGuard>
+    <h3>Nuevo producto</h3>
+
+    <EditForm Model="producto" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <InputText class="form-control" @bind-Value="producto.Nombre" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Precio</label>
+            <InputNumber class="form-control" @bind-Value="producto.Precio" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stock</label>
+            <InputNumber class="form-control" @bind-Value="producto.Stock" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Imagen (opcional)</label>
+            <InputFile class="form-control" OnChange="SeleccionarArchivo" accept=".jpg,.jpeg,.png,.webp" />
+        </div>
+
+        @if (error is not null)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="/productos" class="btn btn-secondary">Cancelar</a>
+    </EditForm>
+</AdminGuard>
+
+@code {
+    private Producto producto = new();
+    private IBrowserFile? archivo;
+    private string? error;
+
+    private void SeleccionarArchivo(InputFileChangeEventArgs e)
+    {
+        archivo = e.File;
+    }
+
+    private async Task Guardar()
+    {
+        try
+        {
+            if (archivo is not null)
+            {
+                producto.ImagenUrl = await ImagenService.Guardar(archivo);
+            }
+
+            await ProductoService.Crear(producto);
+            Navigation.NavigateTo("/productos");
+        }
+        catch (InvalidOperationException ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

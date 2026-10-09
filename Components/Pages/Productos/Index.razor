@@ -5,6 +5,8 @@
 
 <AdminGuard>
 
+<a href="/productos/nuevo" class="btn btn-primary mb-3">Crear producto</a>
+
 @if (productos is null)
 {
     <p>Cargando...</p>
@@ -18,6 +20,7 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Precio</th>
                 <th>Stock</th>
@@ -27,6 +30,12 @@ else
             @foreach (var p in productos)
             {
                 <tr>
+                    <td>
+                        @if (p.ImagenUrl is not null)
+                         {
+                            <img src="@p.ImagenUrl" alt="@p.Nombre" style="height:50px" />
+                         }
+                   </td>
                     <td>@p.Nombre</td>
                     <td>@p.Precio.ToString("C")</td>
                     <td>@p.Stock</td>
