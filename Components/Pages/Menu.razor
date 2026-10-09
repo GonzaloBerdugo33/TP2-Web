@@ -1,0 +1,56 @@
+﻿@page "/menu"
+@inject ProductoService ProductoService
+@inject CarritoService Carrito
+
+<h3>Menú</h3>
+
+<a href="/carrito" class="btn btn-outline-primary mb-3">Ver carrito (@Carrito.CantidadTotal)</a>
+
+@if (productos is null)
+{
+    <p>Cargando...</p>
+}
+else if (productos.Count == 0)
+{
+    <p>Por el momento no hay productos disponibles</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var p in productos)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (p.ImagenUrl is not null)
+                    {
+                        <img src="@p.ImagenUrl" class="card-img-top" alt="@p.Nombre" style="height:200px; object-fit:cover" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@p.Nombre</h5>
+                        <p class="card-text">@p.Precio.ToString("C")</p>
+                        @if (p.Stock == 0)
+                        {
+                            <span class="badge bg-secondary">Sin stock</span>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary"
+                                disabled="@(p.Stock == 0)"
+                                @onclick="() => Carrito.Agregar(p)">
+                            Agregar al carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Producto>? productos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await ProductoService.Listar();
+    }
+}
