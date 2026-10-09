@@ -21,9 +21,9 @@ public class VentaService
         using var db = _factory.CreateDbContext();
 
         // Leer los productos reales desde la base
-        var ids = items.Select(i => i.Producto.Id).ToList();
+        var idsProductos = items.Select(i => i.Producto.Id).ToList();
         var productos = await db.Productos
-            .Where(p => ids.Contains(p.Id))
+            .Where(p => idsProductos.Contains(p.Id))
             .ToDictionaryAsync(p => p.Id);
 
         var venta = new Venta

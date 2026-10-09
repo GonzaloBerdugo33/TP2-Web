@@ -14,9 +14,9 @@ public class Cliente
     [Phone]
     public string Telefono { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "La direccion es obligatoria")]
-    [StringLength(100, MinimumLength = 2)]
-    public string Direccion { get; set; } = string.Empty;
+
+    [StringLength(100)]
+    public string? Direccion { get; set; }
 
     public List<Venta> Ventas { get; set; } = new();
 }
