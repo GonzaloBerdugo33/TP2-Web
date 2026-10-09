@@ -1,0 +1,47 @@
+﻿@page "/productos"
+@inject ProductoService ProductoService
+
+<h3>Productos</h3>
+
+<AdminGuard>
+
+@if (productos is null)
+{
+    <p>Cargando...</p>
+}
+else if (productos.Count == 0)
+{
+    <p>Todavía no hay productos cargados</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in productos)
+            {
+                <tr>
+                    <td>@p.Nombre</td>
+                    <td>@p.Precio.ToString("C")</td>
+                    <td>@p.Stock</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+</AdminGuard>
+
+@code {
+    private List<Producto>? productos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await ProductoService.Listar();
+    }
+}
