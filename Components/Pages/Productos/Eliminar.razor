@@ -1,0 +1,55 @@
+﻿@page "/productos/eliminar/{Id:int}"
+@inject ProductoService ProductoService
+@inject NavigationManager Navigation
+
+<AdminGuard>
+    <h3>Eliminar producto</h3>
+
+    @if (cargando)
+    {
+        <p>Cargando...</p>
+    }
+    else if (producto is null)
+    {
+        <p>No se encontró el producto</p>
+    }
+    else
+    {
+        <p>¿Seguro que querés eliminar <strong>@producto.Nombre</strong>?</p>
+
+        @if (error is not null)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        <button class="btn btn-danger" @onclick="Confirmar">Sí, eliminar</button>
+        <a href="/productos" class="btn btn-secondary">Cancelar</a>
+    }
+</AdminGuard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Producto? producto;
+    private string? error;
+    private bool cargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        producto = await ProductoService.ObtenerPorId(Id);
+        cargando = false;
+    }
+
+    private async Task Confirmar()
+    {
+        try
+        {
+            await ProductoService.Eliminar(Id);
+            Navigation.NavigateTo("/productos");
+        }
+        catch (InvalidOperationException ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

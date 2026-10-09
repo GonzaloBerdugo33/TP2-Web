@@ -1,6 +1,7 @@
 ﻿@page "/productos"
 @inject ProductoService ProductoService
 
+
 <h3>Productos</h3>
 
 <AdminGuard>
@@ -42,6 +43,7 @@ else
                     <td>@p.Stock</td>
                     <td>
                          <a href="/productos/editar/@p.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                         <a href="/productos/eliminar/@p.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
                     </td>
                 </tr>
             }
