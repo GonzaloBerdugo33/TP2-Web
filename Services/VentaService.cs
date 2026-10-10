@@ -13,6 +13,17 @@ public class VentaService
         _factory = factory;
     }
 
+    public async Task<List<Venta>> Listar()
+    {
+        using var db = _factory.CreateDbContext();
+        return await db.Ventas
+            .Include(v => v.Cliente)
+            .Include(v => v.Detalles)
+                .ThenInclude(d => d.Producto)
+            .OrderByDescending(v => v.Fecha)
+            .ToListAsync();
+    }
+
     public async Task<Venta> Confirmar(Cliente cliente, string tipoEntrega, string metodoPago, IReadOnlyList<CarritoItem> items)
     {
         if (items.Count == 0)
