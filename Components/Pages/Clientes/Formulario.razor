@@ -1,0 +1,40 @@
+﻿@page "/clientes/nuevo"
+@inject ClienteService ClienteService
+@inject NavigationManager Navigation
+
+<AdminGuard>
+    <h3>Nuevo cliente</h3>
+
+    <EditForm Model="cliente" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <InputText class="form-control" @bind-Value="cliente.Nombre" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <InputText class="form-control" @bind-Value="cliente.Telefono" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Dirección (opcional)</label>
+            <InputText class="form-control" @bind-Value="cliente.Direccion" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="/clientes" class="btn btn-secondary">Cancelar</a>
+    </EditForm>
+</AdminGuard>
+
+@code {
+    private Cliente cliente = new();
+
+    private async Task Guardar()
+    {
+        await ClienteService.Crear(cliente);
+        Navigation.NavigateTo("/clientes");
+    }
+}
