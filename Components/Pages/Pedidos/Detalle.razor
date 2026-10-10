@@ -1,0 +1,61 @@
+﻿@page "/pedidos/{Id:int}"
+@inject VentaService VentaService
+
+<AdminGuard>
+    <h3>Pedido N° @Id</h3>
+
+    @if (cargando)
+    {
+        <p>Cargando...</p>
+    }
+    else if (venta is null)
+    {
+        <p>No se encontró el pedido</p>
+    }
+    else
+    {
+        <p><strong>Cliente:</strong> @venta.Cliente?.Nombre</p>
+        <p><strong>Entrega:</strong> @venta.TipoEntrega</p>
+        <p><strong>Pago:</strong> @venta.MetodoPago</p>
+        <p><strong>Estado:</strong> @venta.Estado</p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in venta.Detalles)
+                {
+                    <tr>
+                        <td>@d.Producto?.Nombre</td>
+                        <td>@d.Cantidad</td>
+                        <td>@d.PrecioUnitario.ToString("C")</td>
+                        <td>@d.Subtotal.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h5>Total: @venta.Total.ToString("C")</h5>
+    }
+
+    <a href="/pedidos" class="btn btn-secondary">Volver</a>
+</AdminGuard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Venta? venta;
+    private bool cargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        venta = await VentaService.ObtenerPorId(Id);
+        cargando = false;
+    }
+}
