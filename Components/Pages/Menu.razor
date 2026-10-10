@@ -23,7 +23,7 @@ else
                 <div class="card h-100">
                     @if (p.ImagenUrl is not null)
                     {
-                        <img src="@p.ImagenUrl" class="card-img-top" alt="@p.Nombre" style="height:200px; object-fit:cover" />
+                        <img src="@p.ImagenUrl" class="card-img-top" alt="@p.Nombre" style="aspect-ratio:1/1; object-fit:cover" />
                     }
                     <div class="card-body">
                         <h5 class="card-title">@p.Nombre</h5>
