@@ -481,3 +481,11 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 appsettings.Development.json
+
+# Configuración local con claves
+appsettings.Development.json
+appsettings.Production.json
+
+# Imágenes subidas (se conserva solo el .gitkeep)
+**/wwwroot/uploads/*
+!**/wwwroot/uploads/.gitkeep
