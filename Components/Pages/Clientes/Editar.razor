@@ -1,0 +1,60 @@
+﻿@page "/clientes/editar/{Id:int}"
+@inject ClienteService ClienteService
+@inject NavigationManager Navigation
+
+<AdminGuard>
+    <h3>Editar cliente</h3>
+
+    @if (cargando)
+    {
+        <p>Cargando...</p>
+    }
+    else if (cliente is null)
+    {
+        <p>No se encontró el cliente</p>
+    }
+    else
+    {
+        <EditForm Model="cliente" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <InputText class="form-control" @bind-Value="cliente.Nombre" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Teléfono</label>
+                <InputText class="form-control" @bind-Value="cliente.Telefono" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Dirección (opcional)</label>
+                <InputText class="form-control" @bind-Value="cliente.Direccion" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="/clientes" class="btn btn-secondary">Cancelar</a>
+        </EditForm>
+    }
+</AdminGuard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Cliente? cliente;
+    private bool cargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cliente = await ClienteService.ObtenerPorId(Id);
+        cargando = false;
+    }
+
+    private async Task Guardar()
+    {
+        await ClienteService.Actualizar(cliente!);
+        Navigation.NavigateTo("/clientes");
+    }
+}
